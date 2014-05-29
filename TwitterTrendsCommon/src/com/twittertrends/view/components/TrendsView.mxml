@@ -187,7 +187,7 @@
 		</ns:columns>
 	</ns:MobileGrid>
 	<tilemap:TilemapComponent id="map" width="100%" height="100%" includeIn="map" 
-							  key="Fmjtd%7Cluur2du22g%2Ca2%3Do5-9ar21w "
+							  key="USE YOUR MAPQUEST API KEY HERE"
 							  creationComplete="map_creationCompleteHandler(event)" />
 	
 	<components:SentimentsView id="sentimentsView" width="100%" height="100%" includeIn="sentiments">
