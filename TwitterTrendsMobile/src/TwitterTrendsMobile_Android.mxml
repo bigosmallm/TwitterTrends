@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:components="com.twittertrends.view.components.*" creationComplete="creationCompleteHandler(event)" 
+			   >
+	<fx:Style source="assets/styles/styles.css" />
+	<fx:Script>
+		<![CDATA[
+			import com.google.analytics.AnalyticsTracker;
+			import com.google.analytics.GATracker;
+			import com.twittertrends.events.TwitterTrendsEvent;
+			
+			import mx.events.FlexEvent;
+			
+			protected var _tracker:AnalyticsTracker;
+			
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				_tracker = new GATracker(this,"USE YOUR GOOGLE ANALYTICS TRACKER CODE HERE");
+				this.addEventListener(TwitterTrendsEvent.TRACK_EVENT,handleTrackRequest);
+				this.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR,handleUncaughtError);
+			}
+			
+			protected function handleTrackRequest(event:TwitterTrendsEvent):void
+			{
+				var category:String = event.data.category.toString();
+				var action:String = event.data.action.toString();
+				var label:String = event.data.label.toString();
+				var value:Number = event.data.value;
+				_tracker.trackEvent(category, action,label, value);
+			}
+			
+			protected function handleUncaughtError(event:UncaughtErrorEvent):void
+			{
+				var message:String;
+				var stackTrace:String;
+				
+				if (event.error is Error)
+				{
+					message = Error(event.error).message;
+					stackTrace = Error(event.error).getStackTrace();
+				}
+				else if (event.error is ErrorEvent)
+				{
+					message = ErrorEvent(event.error).text;
+				}
+				else
+				{
+					message = event.error.toString();
+				}
+				_tracker.trackEvent("UncaughtError",message,stackTrace,0);
+				event.preventDefault();
+			}
+			
+		]]>
+	</fx:Script>
+	<components:TwitterTrendsMainView width="100%" height="100%" />
+</s:Application>

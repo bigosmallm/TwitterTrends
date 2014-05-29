@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" height="100%" >
+	<fx:Script>
+		<![CDATA[
+			import com.twittertrends.events.TwitterTrendsEvent;
+			
+			import mx.charts.ChartItem;
+			import mx.charts.series.items.ColumnSeriesItem;
+			import mx.collections.ArrayCollection;
+			import mx.graphics.IFill;
+			import mx.graphics.SolidColor;
+			
+			[Bindable] protected var _sentiments:ArrayCollection;
+			protected var _target:String;
+			
+			public function init():void
+			{
+				var e:TwitterTrendsEvent = new TwitterTrendsEvent(TwitterTrendsEvent.REQUEST_SENTIMENTS,true);
+				dispatchEvent(e);
+				currentState = "busy";
+			}
+			
+			public function setSentimentsResult(v:ArrayCollection,target:String):void
+			{
+				_sentiments = v;
+				_target = target;
+				if(_sentiments.length == 0)
+				{
+					currentState = "nosentiments"					
+				}
+				else
+				{
+					currentState = "sentiments";
+				}
+				myChart.validateNow();
+			}
+			
+			protected function sentimentsFillFuntion(item:ChartItem, index:Number):IFill
+			{
+				var curItem:ColumnSeriesItem = ColumnSeriesItem(item);
+				if(isNaN(curItem.yNumber))
+				{
+					return new SolidColor();
+				}
+				if (curItem.yNumber > 0)
+					return(new SolidColor(0x00FF00, .75));
+				else
+					return(new SolidColor(0xFF0000, .75));
+			}
+			
+			
+		]]>
+	</fx:Script>
+	<s:states>
+		<s:State name="busy" />
+		<s:State name="sentiments" />
+		<s:State name="nosentiments" />
+	</s:states>
+	<mx:ColumnChart id="myChart" dataProvider="{_sentiments}" showDataTips="true" width="100%" height="100%"
+					dataTipRenderer="com.twittertrends.view.components.SentimentsDataTipRenderer" >
+		<mx:horizontalAxis>
+			<mx:CategoryAxis categoryField="date"/>
+		</mx:horizontalAxis>
+		<mx:series>
+			<mx:ColumnSeries 
+				xField="date" 
+				yField="score"
+				fillFunction="{sentimentsFillFuntion}"
+				displayName="Sentiment Score"/>
+		</mx:series>
+	</mx:ColumnChart>
+	<s:BusyIndicator horizontalCenter="0" verticalCenter="0" includeIn="busy" />
+	<s:Label text="Sentiment Analysis yielded no results, sorry!" includeIn="nosentiments" horizontalCenter="0" verticalCenter="0" />
+</s:Group>

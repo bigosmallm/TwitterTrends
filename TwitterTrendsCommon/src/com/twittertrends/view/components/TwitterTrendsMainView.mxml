@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!---
+	The TwitterTrendsMainView component acts as the top level Mediator that ensures that different views can talk to each other 
+	without adding direct dependencies.  
+	Child components talk to this Mediator through events.
+	This Mediator talks to child components via their public API.
+	Take a look at http://en.wikipedia.org/wiki/Mediator_pattern for more details
+-->
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:components="com.twittertrends.view.components.*"
+		 width="100%" height="100%" 
+		 creationComplete="creationCompleteHandler(event)">
+	<fx:Script>
+		<![CDATA[
+			import com.dborisenko.api.twitter.data.TwitterSearch;
+			import com.twittertrends.alchemyapi.AlchemyAPI;
+			import com.twittertrends.events.TwitterTrendsEvent;
+			import com.twittertrends.twitterapi.TwitterAPIWrapper;
+			
+			import mx.collections.ArrayCollection;
+			import mx.events.FlexEvent;
+			
+			protected var _twitterAPI:TwitterAPIWrapper;
+			protected var _twitterSearchResults:TwitterSearch;
+			protected var _alchemyAPI:AlchemyAPI;
+			protected var _currentSearchText:String;
+			
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				_twitterAPI = TwitterAPIWrapper.getInstance();
+				_twitterAPI.addEventListener(TwitterTrendsEvent.RESULTS_SEARCH,handleSearchResults);
+				_alchemyAPI = AlchemyAPI.getInstance();
+				_alchemyAPI.addEventListener(TwitterTrendsEvent.RESULTS_SENTIMENTS,handleSentimentsResult);
+			}
+			
+			protected function authorizeView_creationCompleteHandler(event:FlexEvent):void
+			{
+				authorizeView.addEventListener(TwitterTrendsEvent.AUTHORIZATION_SUCCESSFUL,handleAuthorizationSuccessful);
+			}
+			
+			protected function trendsView_creationCompleteHandler(event:FlexEvent):void
+			{
+				trendsView.addEventListener(TwitterTrendsEvent.REQUEST_SEARCH,handleSearchRequest);
+				trendsView.addEventListener(TwitterTrendsEvent.REQUEST_SENTIMENTS,handleSentimentsRequest);
+			}
+			
+			protected function handleAuthorizationSuccessful(event:TwitterTrendsEvent):void
+			{
+				currentState = "trends";
+			}
+			
+			protected function handleSearchRequest(e:TwitterTrendsEvent):void
+			{
+				_currentSearchText = e.data.toString(); 
+				_twitterAPI.search(_currentSearchText);
+			}
+			
+			protected function handleSearchResults(e:TwitterTrendsEvent):void
+			{
+				_twitterSearchResults = TwitterSearch(e.data);
+				trendsView.setSearchResults(_twitterSearchResults);
+			}
+			
+			protected function handleSentimentsRequest(e:TwitterTrendsEvent):void
+			{
+				_alchemyAPI.analysteTweets(_twitterSearchResults.results,_currentSearchText);
+			}
+			
+			protected function handleSentimentsResult(e:TwitterTrendsEvent):void
+			{
+				trendsView.setSentimentsResult(ArrayCollection(e.data),_currentSearchText);
+			}
+			
+		]]>
+	</fx:Script>
+	<s:states>
+		<s:State name="authorize" />
+		<s:State name="trends" />
+	</s:states>
+	<components:AuthorizeView id="authorizeView" width="100%" height="100%" includeIn="authorize" creationComplete="authorizeView_creationCompleteHandler(event)" />
+	<s:Label text="Authorization successful" top="0" horizontalCenter="0" includeIn="trends" />
+	<components:TrendsView id="trendsView" width="100%" height="100%" includeIn="trends" creationComplete="trendsView_creationCompleteHandler(event)" />
+</s:Group>

@@ -1,0 +1,236 @@
+@namespace s "library://ns.adobe.com/flex/spark";
+@namespace components "com.twittertrends.view.components.*";
+@namespace exp "http://flex.apache.org/experimental/ns";
+@namespace supportClasses "spark.components.supportClasses.*";
+@namespace mx "library://ns.adobe.com/flex/mx";
+
+/*Roboto Fonts*/
+@font-face {
+	src: url("assets/fonts/Roboto-Regular.ttf");
+	fontFamily: RobotoRegular;
+	embed-as-cff: false;
+}
+
+@font-face {
+	src: url("assets/fonts/Roboto-Regular.ttf");
+	fontFamily: RobotoRegularCFF;
+	embed-as-cff: true;
+}
+
+@font-face {
+	src: url("assets/fonts/Roboto-Bold.ttf");
+	fontFamily: RobotoBold;
+	fontWeight: bold;
+	embed-as-cff: false;
+}
+
+@font-face {
+	src: url("assets/fonts/Roboto-Bold.ttf");
+	fontFamily: RobotoBoldCFF;
+	fontWeight: bold;
+	embed-as-cff: true;
+}
+
+@font-face {
+	src: url("assets/fonts/Roboto-Light.ttf");
+	fontFamily: RobotoLight;
+	fontWeight: normal;
+	embed-as-cff: false;
+}
+
+@font-face {
+	src: url("assets/fonts/Roboto-Light.ttf");
+	fontFamily: RobotoLightCFF;
+	fontWeight: normal;
+	embed-as-cff: true;
+}
+
+
+@font-face {
+	src: url("assets/fonts/Roboto-Thin.ttf");
+	fontFamily: RobotoThinCFF;
+	fontWeight: normal;
+	embed-as-cff: true;
+}
+
+
+components|AuthorizeView
+{
+	skinClass: ClassReference("com.twittertrends.view.components.skins.ViewsSkin");
+}
+
+components|AuthorizeView #titleDisplay
+{
+	fontSize: 28;
+}
+
+
+components|TrendsView
+{
+	skinClass: ClassReference("com.twittertrends.view.components.skins.ViewsSkin");
+}
+
+.tweet {
+	multiline: true;
+}
+
+
+@media (os-platform: "IOS")
+{
+	global
+	{
+		fontFamily: RobotoLight;
+		fontSize: 24;
+		color: #000000;
+		textShadowColor: #FFFFFF;
+		textShadowAlpha: 0;
+	}
+	
+	components|AuthorizeView
+	{
+		bgFillColors: #00BFFF,#E0FFFF;
+	}
+	
+	components|TrendsView
+	{
+		bgFillColors: #00BFFF,#E0FFFF;
+	}
+}
+
+@media (os-platform: "Android")
+{
+	global
+	{
+		fontFamily: RobotoRegular;
+		fontWeight: "normal";
+		fontSize: 24;
+		color: #000000;
+		textShadowColor: #FFFFFF;
+		textShadowAlpha: 0;
+	}
+	
+	components|AuthorizeView
+	{
+		bgFillColors: #BBBBBB,#EEEEEE;
+	}
+
+	components|TrendsView
+	{
+		bgFillColors: #BBBBBB,#EEEEEE;
+	}
+}
+
+s|Button
+{
+	fontFamily: RobotoBold;
+	fontWeight: bold;
+}
+
+s|ButtonBar#labelDisplay
+{
+	fontFamily: RobotoBold;
+	fontWeight: bold;
+}
+	
+
+s|Label
+{
+	fontFamily: RobotoThinCFF;
+	fontWeight: normal;
+}
+
+s|TextInput
+{
+	fontFamily: RobotoRegular;
+	fontWeight: normal;
+}
+
+exp|MobileGrid
+{
+	fontFamily: RobotoRegular;
+	fontWeight: normal;
+	fontSize: 14;
+	contentBackgroundColor: #FFFFFF;
+	contentBackgroundAlpha: 0.5;
+	alternatingItemColors: #CCCCCC, #EEEEEE;
+	color: #000000;
+	selection-color: #00a2ff; /* blue  */
+}
+
+supportClasses|MobileGridHeader
+{
+	fontFamily: RobotoBold;
+	fontWeight: bold;
+	chromeColor: #FFFFFF;
+	color: #FFFFFF;
+}
+
+supportClasses|MobileGridRowRenderer
+{
+	verticalAlign: "middle";
+	downColor: #FFFFFF;
+	height: 50;
+}
+
+components|SentimentsDataTipRenderer
+{
+	fontFamily: RobotoThin;
+	fontSize: 14;
+}
+
+components|SentimentsDataTipRenderer #scoreDisplayTitle
+{
+	fontFamily: RobotoBoldCFF;
+	fontWeight: bold;
+}
+
+components|SentimentsDataTipRenderer #sentimentDisplayTitle
+{
+	fontFamily: RobotoBoldCFF;
+	fontWeight: bold;
+}
+
+components|SentimentsDataTipRenderer #tweetDisplay
+{
+	fontFamily: RobotoBoldCFF;
+	fontWeight: bold;
+}
+
+
+@media (application-dpi: 320)
+{
+	global
+	{
+		fontSize: 48;
+	}
+	
+	exp|MobileGrid
+	{
+		fontSize: 28;
+	}
+	
+	supportClasses|MobileGridHeader
+	{
+		fontSize: 28;
+	}
+	
+	supportClasses|MobileGridRowRenderer
+	{
+		paddingTop: 2;
+		paddingLeft: 20;
+		paddingRight: 20;
+		paddingBottom: 0;
+		height: 100;
+	}
+	
+	components|SentimentsDataTipRenderer
+	{
+		fontSize: 28;
+	}
+	components|AuthorizeView #titleDisplay
+	{
+		fontSize: 40;
+	}
+
+	
+}

@@ -1,0 +1,28 @@
+	<fx:Declarations>
+		<fx:String id="hockeyAppId">6fb80dc8f291b95a5b5219414e3e5a9d</fx:String>
+	</fx:Declarations>	
+	<fx:Script>
+		<![CDATA[
+			import com.twittertrends.hockeyappapi.HockeyAppAPI;
+			protected function application1_uncaughtErrorHandler(event:UncaughtErrorEvent):void
+			{
+				
+				var message:String;
+				
+				if (event.error is Error)
+				{
+					message = Error(event.error).message;
+				}
+				else if (event.error is ErrorEvent)
+				{
+					message = ErrorEvent(event.error).text;
+				}
+				else
+				{
+					message = event.error.toString();
+				}
+				//HockeyAppAPI.getInstance().sendCrash(message,hockeyAppId);
+				event.preventDefault();
+			}
+		]]>
+	</fx:Script>

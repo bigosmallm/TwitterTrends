@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:SkinnableContainer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					  xmlns:s="library://ns.adobe.com/flex/spark" 
+					  xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" height="100%" xmlns:ns="http://flex.apache.org/experimental/ns" xmlns:layouts="com.twittertrends.view.layouts.*" xmlns:tilemap="com.mapquest.tilemap.*" xmlns:components="com.twittertrends.view.components.*"
+					  >
+	<fx:Script>
+		<![CDATA[
+			import com.dborisenko.api.twitter.data.TwitterSearch;
+			import com.dborisenko.api.twitter.data.TwitterStatus;
+			import com.mapquest.LatLng;
+			import com.mapquest.tilemap.MapCorner;
+			import com.mapquest.tilemap.MapCornerPlacement;
+			import com.mapquest.tilemap.Size;
+			import com.mapquest.tilemap.controls.shadymeadow.SMZoomControl;
+			import com.mapquest.tilemap.pois.ForceDeclutter;
+			import com.mapquest.tilemap.pois.Poi;
+			import com.twittertrends.events.TwitterTrendsEvent;
+			
+			import mx.collections.ArrayCollection;
+			import mx.events.FlexEvent;
+			
+			import spark.events.IndexChangeEvent;
+			import spark.utils.MultiDPIBitmapSource;
+			
+			protected var _twitterSearchResults:TwitterSearch;
+			[Bindable] protected var _searchGridDataProvider:ArrayCollection;
+			private var zoomControl:SMZoomControl;
+			[Embed(source="assets/tweet.png")]
+			private var TweetImage:Class;
+			
+			protected function button1_clickHandler(event:MouseEvent):void
+			{
+				if(searchText.text != "")
+				{
+					var e:TwitterTrendsEvent = new TwitterTrendsEvent(TwitterTrendsEvent.REQUEST_SEARCH,true);
+					e.data = encodeURI(searchText.text);
+					dispatchEvent(e);
+					track("Interaction","Click","Search Button",0);
+				}
+			}
+			
+			public function setSearchResults(v:TwitterSearch):void
+			{
+				_twitterSearchResults = v;
+				_searchGridDataProvider = _twitterSearchResults.results;
+				if(currentState == "map")
+				{
+					loadTweetsOnMap();
+				}
+			}
+			
+			public function getUserImage(o:Object):MultiDPIBitmapSource
+			{
+				var im:MultiDPIBitmapSource = new MultiDPIBitmapSource();
+				im.source320dpi = im.source160dpi  = TwitterStatus(o).user.profileImageUrl;
+				return im;
+			}
+			
+			protected function map_creationCompleteHandler(event:FlexEvent):void
+			{
+				addZoomControl();
+				loadTweetsOnMap();
+			}
+			
+			protected function addZoomControl():void {
+				if (this.zoomControl) return;
+				
+				//get the dpi to determine the scale of the zoom control
+				if (this.parentApplication.applicationDPI < 240) {
+					this.zoomControl = new SMZoomControl(40);
+				}
+				else {
+					this.zoomControl = new SMZoomControl(64);
+				}
+				
+				this.map.addControl(this.zoomControl,new MapCornerPlacement(MapCorner.TOP_LEFT, new Size(6,5)));
+			}
+			
+			protected function loadTweetsOnMap():void
+			{
+				this.map.removeShapes();
+				for each(var tweet:TwitterStatus in _searchGridDataProvider)
+				{
+					if(tweet.geo != null)
+					{
+						var ll:LatLng = new LatLng(tweet.geo.coordinates[0], tweet.geo.coordinates[1]);
+						var poi:Poi = new Poi(ll);
+						poi.infoWindowTitleText = (tweet.hashtags.length>1)?tweet.hashtags[0].hashText:"";
+						poi.infoContent = tweet.text;
+						poi.icon.setImage(new TweetImage(),32,32);
+						this.map.addShape(poi);
+					}
+				}
+				this.map.bestFit(false,2,4);
+				this.map.declutter = new ForceDeclutter();				
+			}
+			
+			protected function tabBar_changeHandler(event:IndexChangeEvent):void
+			{
+				switch(tabBar.selectedIndex)
+				{
+					case 0:
+					{
+						currentState = "grid";
+						track("Interaction","Click","Grid Tab",0);
+						break;
+					}
+					case 1:
+					{
+						currentState = "map";
+						track("Interaction","Click","Map Tab",0);
+						loadTweetsOnMap();
+						break;
+					}
+					case 2:
+					{
+						currentState = "sentiments";
+						track("Interaction","Click","Sentiments Tab",0);
+						sentimentsView.init();
+						break;
+					}
+						
+					default:
+					{
+						currentState = "grid";
+						break;
+					}
+				}
+			}
+			
+			public function setSentimentsResult(v:ArrayCollection,target:String):void
+			{
+				sentimentsView.setSentimentsResult(v,target);
+			}
+			
+			protected function crashBtn_clickHandler(event:MouseEvent):void
+			{
+				throw new Error("Clicked on Crash button!");
+			}
+			
+			protected function track(category:String,action:String,label:String,value:Number):void
+			{
+				var e:TwitterTrendsEvent = new TwitterTrendsEvent(TwitterTrendsEvent.TRACK_EVENT,true);
+				e.data = {category:category,action:action,label:label,value:value};
+				dispatchEvent(e);
+			}
+			
+		]]>
+		
+	</fx:Script>
+	<s:states>
+		<s:State name="grid" />
+		<s:State name="map" />
+		<s:State name="sentiments" />
+	</s:states>
+	<s:layout>
+		<s:VerticalLayout gap="10" />
+	</s:layout>
+	<s:Spacer height="10" />
+	<s:HGroup width="100%" horizontalCenter="0" horizontalAlign="center" >
+		<s:TextInput id="searchText" width="100%" prompt="Enter search term" />
+		<s:Button label="Search" click="button1_clickHandler(event)" />
+		<s:CalloutButton label="Debug">
+			<s:calloutContent>
+				<s:Button id="crashBtn" label="Crash!" click="crashBtn_clickHandler(event)"/>
+			</s:calloutContent>
+		</s:CalloutButton>
+	</s:HGroup>
+	<s:TabBar id="tabBar" width="100%" change="tabBar_changeHandler(event)">
+		<s:ArrayCollection>
+			<fx:String>Grid View</fx:String>
+			<fx:String>Map View</fx:String>
+			<fx:String>Sentiments Analysis</fx:String>
+		</s:ArrayCollection>
+	</s:TabBar>
+	
+	<ns:MobileGrid width="100%" height="100%" dataProvider="{_searchGridDataProvider}" includeIn="grid">
+		<ns:columns>
+			<ns:MobileGridColumn dataField="user.profileImageUrl" headerText="User">
+				<ns:itemRenderer>
+					<fx:Component>
+						<ns:MobileGridBitmapCellRenderer iconFunction="{outerDocument.getUserImage}" />
+					</fx:Component>
+				</ns:itemRenderer>
+			</ns:MobileGridColumn>
+			<ns:MobileGridColumn dataField="text" headerText="Tweet" styleName="tweet" width="100%" />
+		</ns:columns>
+	</ns:MobileGrid>
+	<tilemap:TilemapComponent id="map" width="100%" height="100%" includeIn="map" 
+							  key="Fmjtd%7Cluur2du22g%2Ca2%3Do5-9ar21w "
+							  creationComplete="map_creationCompleteHandler(event)" />
+	
+	<components:SentimentsView id="sentimentsView" width="100%" height="100%" includeIn="sentiments">
+	</components:SentimentsView>
+	
+</s:SkinnableContainer>

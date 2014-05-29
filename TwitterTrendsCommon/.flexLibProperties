@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<flexLibProperties includeAllClasses="true" useMultiPlatformConfig="false" version="3">
+  <includeClasses>
+    <classEntry path="com.twittertrends.twitterapi.TwitterAPIWrapper"/>
+    <classEntry path="com.twittertrends.view.components.AuthorizeView"/>
+    <classEntry path="com.twittertrends.view.components.skins.ViewsSkin"/>
+    <classEntry path="com.twittertrends.view.components.TwitterTrendsMainView"/>
+    <classEntry path="com.twittertrends.events.TwitterTrendsEvent"/>
+    <classEntry path="com.twittertrends.view.components.TrendsView"/>
+    <classEntry path="com.twittertrends.view.components.SentimentsView"/>
+    <classEntry path="com.twittertrends.alchemyapi.AlchemyAPI"/>
+    <classEntry path="com.twittertrends.view.components.SentimentsDataTipRenderer"/>
+  </includeClasses>
+  <includeResources/>
+  <namespaceManifests/>
+</flexLibProperties>

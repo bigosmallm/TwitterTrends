@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:BorderContainer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				   xmlns:s="library://ns.adobe.com/flex/spark"
+				   implements="mx.core.IFlexDisplayObject, mx.core.IDataRenderer"
+				   xmlns:mx="library://ns.adobe.com/flex/mx" >
+	<fx:Script>
+		<![CDATA[
+			
+			[Bindable] private var _sentiment:Object;
+			
+			public function get data():Object
+			{
+				return _sentiment;
+			}
+			
+			public function set data(o:Object):void
+			{
+				_sentiment = o.item;
+			}
+		]]>
+	</fx:Script>
+	<s:layout>
+		<s:VerticalLayout />
+	</s:layout>
+	<s:Label id="tweetDisplay" text="{_sentiment.tweet.text}" /> 
+	<s:HGroup width="100%" verticalAlign="middle">
+		<s:Label id="scoreDisplayTitle" text="Score: " />
+		<s:Label id="scoreDisplay" text="{_sentiment.score}" />
+	</s:HGroup> 
+	<s:HGroup width="100%" verticalAlign="middle">
+		<s:Label id="sentimentDisplayTitle" text="Sentiment: " />
+		<s:Label id="sentimentDisplay" text="{_sentiment.sentiment}" />
+	</s:HGroup> 
+</s:BorderContainer>
