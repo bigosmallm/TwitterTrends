@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<fxpProperties abbreviated="false" authoringTool="Flex Builder" parentProject="db46a0cb-bd18-47da-81e9-ced4bf9f49c4" projectUUID="43557bdc-5f24-46cb-8c77-8ac0522c7c40" pureCatalystProject="false" sdkVersion="4.11.0" uuid="86a7a664-f17b-4ce2-821b-73675a727b87" version="15">
+  <projects/>
+  <src/>
+  <swc>
+    <linked location="sdkPlaceHolder" path="sdkPlaceHolder" position="0" uuid="86a7a664-f17b-4ce2-821b-73675a727b87"/>
+    <linked location="C:/work/bigdatahackathon/TwitterAS3API/twitter-actionscript-api/library/TwitterAPI/libs" path="/libs" position="1" uuid="86a7a664-f17b-4ce2-821b-73675a727b87"/>
+  </swc>
+  <misc/>
+  <theme/>
+  <mxmlFormattingPrefs groupAttributesByState="true" maxLineWidth="100" mxmlAlignAttributes="true" mxmlAttributeOrder="id,userLabel,includeIn,excludeFrom,visible,x,y,z,left,right,top,bottom,width,height,minWidth,minHeight,maxWidth,maxHeight,label" mxmlKeepAttributeValuesOrganized="true"/>
+</fxpProperties>
